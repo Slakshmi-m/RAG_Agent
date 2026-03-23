@@ -1,12 +1,11 @@
 # Lighting practice RAG Agent
 ### AI-Powered Lighting Standards Retrieval System
-**Take-Home Task | AI Engineer (Working Student) | TRILUX**
 
 An AI-powered agent that helps lighting professionals navigate the 580-page TRILUX *Beleuchtungspraxis* to identify and apply relevant lighting norms and standards for their specific scenarios.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone and set up environment
@@ -31,7 +30,7 @@ adk web              # Browser UI at http://localhost:8000
 
 ---
 
-## 🧠 System Architecture & Approach
+## System Architecture & Approach
 
 My goal was to build a pragmatic, highly accurate system. Rather than over-engineering a massive multi-agent framework, I focused on **high-quality data ingestion** and **hybrid retrieval**.
 
@@ -100,7 +99,7 @@ Query → embed → check cache
 
 ---
 
-## 🛡️ Handling Edge Cases
+## Handling Edge Cases
 
 During development, I encountered and solved several complex RAG edge cases:
 
@@ -121,9 +120,9 @@ During development, I encountered and solved several complex RAG edge cases:
 
 ---
 
-## ⚖️ Evaluation & Limitations
+## Evaluation & Limitations
 
-### What Works Well ✅
+### What Works Well 
 
 **Accuracy & Citation:** The hybrid retrieval effectively surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent reliably cites the page numbers of its sources — every claim is traceable back to a specific page in the Beleuchtungspraxis.
 
@@ -135,7 +134,7 @@ During development, I encountered and solved several complex RAG edge cases:
 
 **Cross-language Retrieval:** The multilingual embedding model (`paraphrase-multilingual-MiniLM-L12-v2`) maps English and German queries into the same vector space — `"office lighting"` retrieves `"Bürobeleuchtung"` chunks without any translation step.
 
-### What Doesn't Work Perfectly Yet ⚠️
+### What Doesn't Work Perfectly Yet 
 
 **The "Double-Extraction Ghost"**
 
@@ -147,7 +146,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - **Pre-retrieval query translation:** Translate English queries to German before embedding — increases semantic match confidence since the document is entirely in German
 - **Cross-encoder re-ranking:** Add a `cross-encoder/ms-marco-MiniLM-L-6-v2` as a second-stage filter over RRF results for higher precision
@@ -157,7 +156,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Lighting_Agent/
@@ -175,7 +174,7 @@ Lighting_Agent/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Tool | Why |
 |---|---|---|
