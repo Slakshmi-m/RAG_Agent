@@ -1,0 +1,9 @@
+.venv/
+.env
+chroma_db/
+__pycache__/
+*.pyc   
+*.pyo
+Beleuchtungspraxis.pdf
+.adk/
+.DS_Store

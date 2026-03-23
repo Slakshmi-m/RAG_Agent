@@ -1,0 +1,23 @@
+# Beleuchtungspraxis RAG Agent — Dependencies
+# Python 3.10+
+
+# PDF processing
+pdfplumber==0.11.4
+
+# Embeddings (runs locally, no API key needed)
+sentence-transformers==3.0.1
+
+# Vector database (local, persistent)
+chromadb==0.5.3
+
+# BM25 keyword search (hybrid retrieval)
+rank-bm25==0.2.2
+
+# Google ADK — agent framework + Gemini (free tier: gemini-2.5-flash)
+google-adk
+
+# Environment variable loading
+python-dotenv==1.0.1
+
+# Utilities (usually pre-installed)
+pypdf==4.3.1
