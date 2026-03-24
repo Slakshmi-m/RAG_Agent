@@ -87,7 +87,7 @@ The agent uses `gemini-2.5-flash` via Google ADK's function calling to query the
 
 **Unified Tooling:** To prevent quota exhaustion and reduce latency, I combined broad semantic search and targeted norm table search into a **single unified tool** (`search_lighting_knowledge`). This reduces API calls from 3-4 per query down to 2.
 
-**Semantic Caching:** Frequently asked queries bypass retrieval entirely via a **cosine-similarity cache** (threshold: 0.92). Two queries with similarity above this threshold share the same cached result — so `"office lighting standards"` and `"Bürobeleuchtung Normen"` hit the same cache entry.
+**Semantic Caching:** Frequently asked queries bypass retrieval entirely via a **cosine-similarity cache** (threshold: 0.92). Two queries with similarity above this threshold share the same cached result - so `"office lighting standards"` and `"Bürobeleuchtung Normen"` hit the same cache entry.
 
 ```
 Query → embed → check cache
@@ -104,7 +104,7 @@ Query → embed → check cache
 During development, I encountered and solved several complex RAG edge cases:
 
 ### Cross-Lingual Bleed
-**Problem:** The user asks in English, but the retrieved chunks are in German. The LLM anchors to the German context and replies in German — even when explicitly instructed otherwise.
+**Problem:** The user asks in English, but the retrieved chunks are in German. The LLM anchors to the German context and replies in German - even when explicitly instructed otherwise.
 
 **Solution:**  A strict **Language Lock directive** is given in the system prompt, forcing the LLM to translate technical terms dynamically and respond entirely in the user's native language.
 
@@ -114,7 +114,7 @@ During development, I encountered and solved several complex RAG edge cases:
 **Solution:** A **Clarification Rule** in the system prompt: the agent provides the general range of applicable values but ends by asking the user to specify their exact visual task (e.g. *"Are you doing data entry, reading, or technical drawing?"*).
 
 ### API Quota Multiplier
-**Problem:** Agentic systems with multiple tools multiply API usage. Each tool call requires the LLM to process the result and decide next steps — counting as a separate API request. With separate tools, one user question triggered 3-4 API calls, exhausting a 20 req/day free tier after only 5–6 questions.
+**Problem:** Agentic systems with multiple tools multiply API usage. Each tool call requires the LLM to process the result and decide next steps — counting as a separate API request. With separate tools, one user question triggered 3-4 API calls, exhausting a 20 req/day free tier after only 5-6 questions.
 
 **Solution:** Merged all retrieval into a single unified tool, reducing every query to exactly 2 API calls (one to invoke the tool, one to generate the answer).
 
@@ -124,7 +124,7 @@ During development, I encountered and solved several complex RAG edge cases:
 
 ### What Works Well 
 
-**Accuracy & Citation:** The hybrid retrieval effectively surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent reliably cites the page numbers of its sources — every claim is traceable back to a specific page in the Beleuchtungspraxis.
+**Accuracy & Citation:** The hybrid retrieval effectively surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent reliably cites the page numbers of its sources - every claim is traceable back to a specific page in the Beleuchtungspraxis.
 
 **Formatting:** The agent strictly adheres to a highly readable 4-part structure regardless of query type:
 - Applicable Norms
@@ -142,7 +142,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 - One clean Markdown table (extracted specifically via `extract_tables()`)
 - One garbled string of the same data (from the general page text extraction)
 
-**Trade-off Decision:** Filtering out table bounding boxes from prose extraction requires complex coordinate math using `pdfplumber`'s bbox API. Given the time constraints of this task, I opted not to build this filter. The Hybrid Retrieval's RRF scoring naturally mitigates this — the clean Markdown table consistently ranks higher than the garbled prose duplicate due to its structured vocabulary.
+**Trade-off Decision:** Filtering out table bounding boxes from prose extraction requires complex coordinate math using `pdfplumber`'s bbox API. Given the time constraints of this task, I opted not to build this filter. The Hybrid Retrieval's RRF scoring naturally mitigates this - the clean Markdown table consistently ranks higher than the garbled prose duplicate due to its structured vocabulary.
 
 ---
 
