@@ -30,6 +30,37 @@ adk web              # Browser UI at http://localhost:8000
 
 ---
 
+##  Project Structure
+
+```
+Lighting_Agent/
+├── agent/
+│   ├── agent.py          # ADK agent — tools, cache, memory, language detection
+│   ├── __init__.py
+│   └── .env              # GEMINI_API_KEY (not committed)
+├── chunker.py            # Table-aware PDF chunking
+├── retriever.py          # Hybrid BM25 + semantic search with RRF
+├── requirements.txt
+├── README.md
+├── Beleuchtungspraxis.pdf       # Source document (request from TRILUX)
+└── chroma_db/                   # Auto-created: vector index + BM25 pickle
+```
+
+---
+
+## Tech Stack
+
+| Component | Tool | Why |
+|---|---|---|
+| PDF parsing | `pdfplumber` | Table extraction + layout-aware text |
+| Embeddings | `sentence-transformers` | Free, local, multilingual (50+ languages) |
+| Vector DB | `ChromaDB` | Local, persistent, zero infrastructure |
+| Keyword search | `rank-bm25` | Exact matching for norm codes |
+| Retrieval fusion | Reciprocal Rank Fusion | Standard hybrid RAG merge strategy |
+| Agent framework | Google ADK | Native Gemini integration, built-in dev UI |
+| LLM | Gemini 2.5 Flash Lite | Free tier, strong German, large context window |
+
+
 ## System Architecture & Approach
 
 My goal was to build a pragmatic, highly accurate system. Rather than over-engineering a massive multi-agent framework, I focused on **high-quality data ingestion** and **hybrid retrieval**.
@@ -135,6 +166,10 @@ During development, I encountered and solved several complex RAG edge cases:
 
 **Cross-language Retrieval:** The multilingual embedding model (`paraphrase-multilingual-MiniLM-L12-v2`) maps English and German queries into the same vector space — `"office lighting"` retrieves `"Bürobeleuchtung"` chunks without any translation step.
 
+**Semantic Cache:** Repeat or semantically similar queries bypass retrieval entirely via a cosine-similarity cache (threshold 0.92) — instant response, zero tokens consumed.
+
+**Hybrid Precision:** BM25 catches exact norm codes like EN 12464-1 that semantic search alone would miss. Together they consistently outperform either method alone.
+
 ### What Doesn't Work Perfectly Yet 
 
 **The "Double-Extraction Ghost"**
@@ -145,6 +180,8 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 
 **Trade-off Decision:** Filtering out table bounding boxes from prose extraction requires complex coordinate math using `pdfplumber`'s bbox API. Given the time constraints of this task, I opted not to build this filter. The Hybrid Retrieval's RRF scoring naturally mitigates this - the clean Markdown table consistently ranks higher than the garbled prose duplicate due to its structured vocabulary.
 
+**In-Memory Cache Only:** The semantic cache resets on every agent restart since it lives in a plain Python list in RAM. Warm cache state is lost between sessions — the first query after restart always runs full retrieval.
+
 ---
 
 ## Future Improvements
@@ -152,36 +189,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 - **Cross-encoder re-ranking:** Add a `cross-encoder/ms-marco-MiniLM-L-6-v2` as a second-stage filter over RRF results for higher precision
 - **Managed vector database:** Replace local ChromaDB with Pinecone or Weaviate if scaling to thousands of concurrent users
 - **Persistent cache:** Move the in-memory semantic cache to Redis or SQLite for cross-session and cross-instance cache sharing
-- **Auto-invalidation:** Hash the chunk corpus on startup and automatically invalidate BM25 pickle files when the document changes
+- **Evaluation dataset:** Build 20-30 labelled Q&A pairs to measure retrieval recall objectively — currently quality is assessed manually
 
 ---
 
-##  Project Structure
-
-```
-Lighting_Agent/
-├── agent/
-│   ├── agent.py          # ADK agent — tools, cache, memory, language detection
-│   ├── __init__.py
-│   └── .env              # GEMINI_API_KEY (not committed)
-├── chunker.py            # Table-aware PDF chunking
-├── retriever.py          # Hybrid BM25 + semantic search with RRF
-├── requirements.txt
-├── README.md
-├── Beleuchtungspraxis.pdf       # Source document (request from TRILUX)
-└── chroma_db/                   # Auto-created: vector index + BM25 pickle
-```
-
----
-
-## Tech Stack
-
-| Component | Tool | Why |
-|---|---|---|
-| PDF parsing | `pdfplumber` | Table extraction + layout-aware text |
-| Embeddings | `sentence-transformers` | Free, local, multilingual (50+ languages) |
-| Vector DB | `ChromaDB` | Local, persistent, zero infrastructure |
-| Keyword search | `rank-bm25` | Exact matching for norm codes |
-| Retrieval fusion | Reciprocal Rank Fusion | Standard hybrid RAG merge strategy |
-| Agent framework | Google ADK | Native Gemini integration, built-in dev UI |
-| LLM | Gemini 2.5 Flash Lite | Free tier, strong German, large context window |
