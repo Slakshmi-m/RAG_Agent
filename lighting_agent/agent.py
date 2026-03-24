@@ -63,6 +63,8 @@ else:
         )
     print(f"Built vector store: {_collection.count()} chunks")
 
+### Pickling the BM25 index to disk for faster startup in future runs.    
+
 import pickle
 
 BM25_INDEX_PATH  = os.path.join(CHROMA_DIR, f"{COLLECTION_NAME}_bm25_index.pkl")
