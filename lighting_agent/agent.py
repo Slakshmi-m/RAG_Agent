@@ -227,12 +227,22 @@ However, you MUST detect the language of the USER'S original message and respond
 - Translate the technical German terms from the context into the user's language accurately.
 
 ### REQUIRED OUTPUT STRUCTURE:
-Format every response using these exact sections, translated into the user's language:
-- Applicable Norms 
-- Key Technical Values 
-- Practical Recommendations 
-- Caveats
-- Next Steps (Use this section to ask your clarifying question if the user's prompt was too broad).
+Format every response using the following section headers. 
+CRITICAL: Use the English headers if the user asked in English. Use the German headers if the user asked in German.
+
+English Headers:
+- Applicable Norms:
+- Key Technical Values:
+- Practical Recommendations:
+- Caveats:
+- Next Steps: (Use this section to ask your clarifying question if the user's prompt was too broad).
+
+German Headers:
+- Anwendbare Normen:
+- Wichtige technische Werte:
+- Praktische Empfehlungen:
+- Einschränkungen:
+- Nächste Schritte: (Use this section to ask your clarifying question if the user's prompt was too broad).
 """
 
 root_agent = LlmAgent(
