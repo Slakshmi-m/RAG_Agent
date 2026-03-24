@@ -58,7 +58,7 @@ Lighting_Agent/
 | Keyword search | `rank-bm25` | Exact matching for norm codes |
 | Retrieval fusion | Reciprocal Rank Fusion | Standard hybrid RAG merge strategy |
 | Agent framework | Google ADK | Native Gemini integration, built-in dev UI |
-| LLM | Gemini 2.5 Flash Lite | Free tier, strong German, large context window |
+| LLM | Gemini 2.5 Flash | Free tier, strong German, large context window |
 
 
 ## System Architecture & Approach
