@@ -34,7 +34,7 @@ adk web              # Browser UI at http://localhost:8000
 
 ```
 Lighting_Agent/
-├── agent/
+├── lighting_agent/
 │   ├── agent.py          # ADK agent — tools, cache, memory, language detection
 │   ├── __init__.py
 │   └── .env              # GEMINI_API_KEY (not committed)
