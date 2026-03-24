@@ -4,11 +4,11 @@ chunker.py — Table-Aware PDF Chunking for Beleuchtungspraxis
 The Beleuchtungspraxis contains two fundamentally different content types:
 
   1. PROSE: Running explanatory text (regular paragraphs, bullet points)
-     → Handle with sliding-window character chunking
+     -> Handle with sliding-window character chunking
 
   2. NORM TABLES: Structured tables like "Tabelle 4.1 — Lichttechnische
      Anforderungen" with columns for room type, Ēm (lux), Uo, Ra, RUGR, etc.
-     → These MUST be kept intact. Splitting a table row across two chunks
+     -> These MUST be kept intact. Splitting a table row across two chunks
        loses the association between room name and its required values.
 
 Strategy:
@@ -31,8 +31,7 @@ PROSE_CHUNK_SIZE = 500      # characters per prose chunk
 PROSE_CHUNK_OVERLAP = 80    # overlap between consecutive prose chunks
 MIN_CHUNK_LENGTH = 80       # ignore chunks shorter than this (page numbers etc.)
 
-# Table detection: a page is "table-heavy" if pdfplumber finds at least this
-# many rows across all extracted tables on the page.
+# Table detection: a page is "table-heavy" if pdfplumber finds at least this many rows across all extracted tables on the page.
 TABLE_ROW_THRESHOLD = 3
 
 
@@ -122,8 +121,7 @@ def chunk_page_prose(page_text: str, page_num: int, chunk_size: int, overlap: in
     while start < len(text):
         end = start + chunk_size
         
-        # If we aren't at the end of the text, pull back to the nearest space
-        # so we don't slice a word (like "Beleuchtungsstärke") in half.
+        # If we aren't at the end of the text, pull back to the nearest space so we don't slice a word (like "Beleuchtungsstärke") in half.
         if end < len(text):
             while end > start and text[end] not in [' ', '\n']:
                 end -= 1
@@ -182,7 +180,7 @@ def chunk_page_tables(page, page_num: int) -> List[Dict]:
             "text": md_table,
             "page_num": page_num,
             "section": f"Table {i+1} on page {page_num}",
-            "content_type": "norm_table",   # ← tagged as structured data
+            "content_type": "norm_table",   # tagged as structured data
             "chunk_idx": i,
         })
 
@@ -199,8 +197,8 @@ def extract_and_chunk(
 
     For each page:
       1. Try to extract tables with pdfplumber
-      2. If tables found → store each as an intact Markdown chunk
-      3. Extract prose text → sliding-window chunk it
+      2. If tables found - store each as an intact Markdown chunk
+      3. Extract prose text - sliding-window chunk it
       4. Tag everything with page number, section, content_type
 
     Returns:
@@ -212,7 +210,7 @@ def extract_and_chunk(
 
     with pdfplumber.open(pdf_path) as pdf:
         total = len(pdf.pages)
-        print(f"📄 Processing {total} pages with table-aware chunker...")
+        print(f"Processing {total} pages with table-aware chunker...")
 
         for i, page in enumerate(pdf.pages):
             page_num = i + 1
@@ -229,8 +227,7 @@ def extract_and_chunk(
                     prose_text, page_num, prose_chunk_size, prose_overlap
                 )
 
-            # Assign global IDs and collect
-            # Tables first (they're more specific/valuable), then prose
+            # Assign global IDs and collect tables first (they're more specific/valuable), then prose
             for chunk in table_chunks + prose_chunks:
                 chunk["id"] = f"chunk_{chunk_counter:05d}"
                 all_chunks.append(chunk)
@@ -244,7 +241,7 @@ def extract_and_chunk(
     n_prose = sum(1 for c in all_chunks if c["content_type"] == "prose")
     print(f"\n Chunking complete!")
     print(f"   Total chunks : {len(all_chunks)}")
-    print(f"   Norm tables  : {n_tables}  ← kept fully intact")
+    print(f"   Norm tables  : {n_tables}  <- kept fully intact")
     print(f"   Prose chunks : {n_prose}")
 
     return all_chunks

@@ -19,6 +19,7 @@ EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
 TOP_K           = 3
 
 # Load embedding model and vector store at startup -------------------------------
+
 _embed_model = SentenceTransformer(EMBEDDING_MODEL)
 _client = chromadb.PersistentClient(path=CHROMA_DIR)
 _existing = [c.name for c in _client.list_collections()]
@@ -113,6 +114,7 @@ def _store_cache(query_embedding, query, result):
     """Store a new query+result in the cache."""
     _cache.append({"embedding": query_embedding, "query": query, "result": result})
     print(f"Cached query (total cached: {len(_cache)})")
+
 
 # ADK Custom Tool ---------------------------------------------------------------  
  
@@ -235,22 +237,9 @@ Format every response using these exact sections, translated into the user's lan
 
 root_agent = LlmAgent(
     name="beleuchtungspraxis_agent",
-    model="gemini-2.5-flash-lite",
-    instruction=AGENT_INSTRUCTION,
-    tools=[
-        search_lighting_knowledge,  # Replaced the two old tools with this one
-        load_memory,                
-    ],
-    description="An AI lighting consultant..."
-)
-
-root_agent = LlmAgent(
-    name="beleuchtungspraxis_agent",
     model="gemini-2.5-flash",
     instruction=AGENT_INSTRUCTION,
     tools=[
-        #search_lighting_standards,  # broad hybrid RAG retrieval
-        #search_norm_tables,         # targeted norm table retrieval for specific values
         search_lighting_knowledge,
         load_memory,                # ADK built-in: recall past sessions
     ],

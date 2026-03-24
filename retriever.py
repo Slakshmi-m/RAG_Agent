@@ -16,21 +16,21 @@ very fast. But it misses synonyms and cross-language matches.
 
 HYBRID APPROACH (Reciprocal Rank Fusion):
 ──────────────────────────────────────────
-1. Run semantic search → get top-K results with ranks
-2. Run BM25 keyword search → get top-K results with ranks
+1. Run semantic search - get top-K results with ranks
+2. Run BM25 keyword search - get top-K results with ranks
 3. Merge using Reciprocal Rank Fusion (RRF):
      score(chunk) = 1/(rank_semantic + k) + 1/(rank_bm25 + k)
    where k=60 is a smoothing constant (standard RRF parameter)
-4. Re-rank by combined score → return top-K
+4. Re-rank by combined score - return top-K
 
 This gives the best of both: semantic understanding + exact matching.
 
 EXAMPLE:
   Query: "EN 12464-1 Büro 500 lux"
   
-  Semantic only → finds "Bürobeleuchtung Anforderungen" chunks (good intent match)
-  BM25 only     → finds chunks containing "EN 12464-1" literally (good exact match)
-  Hybrid        → finds chunks that match BOTH — highest quality results
+  Semantic only - finds "Bürobeleuchtung Anforderungen" chunks (good intent match)
+  BM25 only     - finds chunks containing "EN 12464-1" literally (good exact match)
+  Hybrid        - finds chunks that match BOTH — highest quality results
 """
 
 import re
@@ -39,6 +39,13 @@ from typing import List, Dict, Tuple
 import chromadb
 from sentence_transformers import SentenceTransformer
 from rank_bm25 import BM25Okapi
+
+
+# Tokenise for BM25 (keep norm identifiers intact)
+
+def tokenise_for_bm25(text: str) -> List[str]:
+    """Extract tokens, keeping technical identifiers like EN-12464-1 intact."""
+    return re.findall(r"[\w][\w\-\.]*", text.lower())
 
 
 # BM25 Index 
@@ -188,13 +195,12 @@ def hybrid_search(
     Full hybrid retrieval pipeline.
 
     Steps:
-    1. Semantic search → top fetch_k candidates
-    2. BM25 keyword search → top fetch_k candidates
+    1. Semantic search - top fetch_k candidates
+    2. BM25 keyword search - top fetch_k candidates
     3. Merge with RRF
     4. Return final top_k
 
-    The fetch_k > top_k pattern ("over-fetch then re-rank") is standard
-    in hybrid RAG systems — you cast a wider net before merging.
+    The fetch_k > top_k pattern ("over-fetch then re-rank") is standard in hybrid RAG systems — you cast a wider net before merging.
 
     Args:
         query: user's natural language question
@@ -272,8 +278,3 @@ def retrieval_confidence(results: List[Dict]) -> str:
     else:
         return "low"
 
-# Tokenise for BM25 (keep norm identifiers intact)
-
-def tokenise_for_bm25(text: str) -> List[str]:
-    """Extract tokens, keeping technical identifiers like EN-12464-1 intact."""
-    return re.findall(r"[\w][\w\-\.]*", text.lower())
