@@ -180,7 +180,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 
 **Trade-off Decision:** Filtering out table bounding boxes from prose extraction requires complex coordinate math using `pdfplumber`'s bbox API. Given the time constraints of this task, I opted not to build this filter. The Hybrid Retrieval's RRF scoring naturally mitigates this - the clean Markdown table consistently ranks higher than the garbled prose duplicate due to its structured vocabulary.
 
-**In-Memory Cache Only:** The semantic cache resets on every agent restart since it lives in a plain Python list in RAM. Warm cache state is lost between sessions — the first query after restart always runs full retrieval.
+**In-Memory Cache Only:** The semantic cache resets on every agent restart since it lives in a plain Python list in RAM. Warm cache state is lost between sessions - the first query after restart always runs full retrieval.
 
 ---
 
@@ -189,7 +189,7 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 - **Cross-encoder re-ranking:** Add a `cross-encoder/ms-marco-MiniLM-L-6-v2` as a second-stage filter over RRF results for higher precision
 - **Managed vector database:** Replace local ChromaDB with Pinecone or Weaviate if scaling to thousands of concurrent users
 - **Persistent cache:** Move the in-memory semantic cache to Redis or SQLite for cross-session and cross-instance cache sharing
-- **Evaluation dataset:** Build 20-30 labelled Q&A pairs to measure retrieval recall objectively — currently quality is assessed manually
+- **Evaluation dataset:** Build 20-30 labelled Q&A pairs to measure retrieval recall objectively - currently quality is assessed manually
 
 ---
 
