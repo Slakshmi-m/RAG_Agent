@@ -114,7 +114,7 @@ During development, I encountered and solved several complex RAG edge cases:
 **Solution:** A **Clarification Rule** in the system prompt: the agent provides the general range of applicable values but ends by asking the user to specify their exact visual task (e.g. *"Are you doing data entry, reading, or technical drawing?"*).
 
 ### API Quota Multiplier
-**Problem:** Agentic systems with multiple tools multiply API usage. Each tool call requires the LLM to process the result and decide next steps — counting as a separate API request. With separate tools, one user question triggered 3-4 API calls, exhausting a 20 req/day free tier after only 5-6 questions.
+**Problem:** Agentic systems with multiple tools multiply API usage. Each tool call requires the LLM to process the result and decide next steps - counting as a separate API request. With separate tools, one user question triggered 3-4 API calls, exhausting a 20 req/day free tier after only 5-6 questions.
 
 **Solution:** Merged all retrieval into a single unified tool, reducing every query to exactly 2 API calls (one to invoke the tool, one to generate the answer).
 
@@ -126,11 +126,12 @@ During development, I encountered and solved several complex RAG edge cases:
 
 **Accuracy & Citation:** The hybrid retrieval effectively surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent reliably cites the page numbers of its sources - every claim is traceable back to a specific page in the Beleuchtungspraxis.
 
-**Formatting:** The agent strictly adheres to a highly readable 4-part structure regardless of query type:
+**Formatting:** The agent strictly adheres to a highly readable 5-part structure regardless of query type:
 - Applicable Norms
 - Key Technical Values
 - Practical Recommendations
-- Caveats
+- Caveat
+- Next Steps (Used to ask clarifying question if the user's prompt was too broad)
 
 **Cross-language Retrieval:** The multilingual embedding model (`paraphrase-multilingual-MiniLM-L12-v2`) maps English and German queries into the same vector space — `"office lighting"` retrieves `"Bürobeleuchtung"` chunks without any translation step.
 
@@ -148,7 +149,6 @@ Because `pdfplumber` extracts all text from a page via `extract_text()`, pages c
 
 ## Future Improvements
 
-- **Pre-retrieval query translation:** Translate English queries to German before embedding — increases semantic match confidence since the document is entirely in German
 - **Cross-encoder re-ranking:** Add a `cross-encoder/ms-marco-MiniLM-L-6-v2` as a second-stage filter over RRF results for higher precision
 - **Managed vector database:** Replace local ChromaDB with Pinecone or Weaviate if scaling to thousands of concurrent users
 - **Persistent cache:** Move the in-memory semantic cache to Redis or SQLite for cross-session and cross-instance cache sharing
