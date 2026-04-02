@@ -1,50 +1,7 @@
-# Lighting practice RAG Agent
-### AI-Powered Lighting Standards Retrieval System
+# RAG Agent
+### AI-Powered Retrieval System
 
-An AI-powered agent that helps lighting professionals navigate the 580-page TRILUX *Beleuchtungspraxis* to identify and apply relevant lighting norms and standards for their specific scenarios.
-
----
-
-## Quick Start
-
-```bash
-# 1. Clone and set up environment
-git clone <your-repo-url>
-cd Lighting_Agent
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# 2. Add your Gemini API key
-cp agent/.env.example agent/.env
-# Edit agent/.env and set GEMINI_API_KEY=your_key_here
-
-# 3. Place the PDF in the project root
-# Request from: https://www.trilux.com/de/beleuchtungspraxis/
-
-# 4. Run the agent
-adk run agent        # CLI chat
-adk web              # Browser UI at http://localhost:8000
-```
-
-> **First run** builds the vector index (~5 min). Every subsequent run loads from disk instantly.
-
----
-
-##  Project Structure
-
-```
-Lighting_Agent/
-├── lighting_agent/
-│   ├── agent.py          # ADK agent — tools, cache, memory, language detection
-│   ├── __init__.py
-│   └── .env              # GEMINI_API_KEY (not committed)
-├── chunker.py            # Table-aware PDF chunking
-├── retriever.py          # Hybrid BM25 + semantic search with RRF
-├── requirements.txt
-├── README.md
-├── Beleuchtungspraxis.pdf       # Source document (request from TRILUX)
-└── chroma_db/                   # Auto-created: vector index + BM25 pickle
-```
+An AI-powered agent that helps to navigate 500+ pages technical document in German.
 
 ---
 
