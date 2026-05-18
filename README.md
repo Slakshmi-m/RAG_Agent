@@ -68,7 +68,7 @@ The agent uses `gemini-2.5-flash` via Google ADK's function calling.
 
 **Unified tool:** To prevent quota exhaustion and reduce latency, broad semantic search and targeted norm table search are combined into a **single tool** (`search_lighting_knowledge`). This brings API calls per query down from 3-4 to 2.
 
-**Semantic cache:** Frequently asked queries bypass retrieval entirely via a cosine-similarity cache (threshold: 0.92). Two queries above this threshold share the same cached result — so `"office lighting standards"` and `"Bürobeleuchtung Normen"` hit the same entry.
+**Semantic cache:** Frequently asked queries bypass retrieval entirely via a cosine-similarity cache (threshold: 0.92). Two queries above this threshold share the same cached result - so `"office lighting standards"` and `"Bürobeleuchtung Normen"` hit the same entry.
 
 ```
 Query → embed → check cache
@@ -105,7 +105,7 @@ The semantic cache lives in a Python list in RAM and resets on every restart. Th
 
 ## What Works Well
 
-**Accuracy and citation:** Hybrid retrieval reliably surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent cites source page numbers — every claim is traceable back to a specific page.
+**Accuracy and citation:** Hybrid retrieval reliably surfaces exact numerical values (lux levels, Ra, RUGR, Uo), and the agent cites source page numbers - every claim is traceable back to a specific page.
 
 **Structured output:** The agent consistently follows a 5-part format regardless of query type: applicable norms → key technical values → practical recommendations → caveat → next steps.
 
